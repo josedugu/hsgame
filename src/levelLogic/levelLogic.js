@@ -1,9 +1,9 @@
-import { mockData } from "../data/data";
-const getData=async(url)=>{
+//import { mockData } from "../data/data";
+export const getData = async (url) => {
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error('Error al obtener datos de la API');
+      throw new Error("Error al obtener datos de la API");
     }
     const data = await response.json();
     return data;
@@ -11,23 +11,28 @@ const getData=async(url)=>{
     console.error(error);
     return null;
   }
-}
+};
 
-class LevelLogic {
+export class LevelLogic {
   constructor(data) {
-    this.gold = data.filter((animal) => animal.level === "gold");
-    this.silver = data.filter((animal) => animal.level === "silver");
-    this.unknown = data.filter((animal) => animal.level === "unknown");
+    this.gold = data.words.filter((word) => word.score[0] === "gold");
+    this.silver = data.words.filter((word) => word.score[0] === "silver");
+    this.unknown = data.words.filter((word) => word.score[0] === "unknown");
+    this.allWords = data.words;
     this.speaker = window.speechSynthesis;
     this.counter = 0;
     this.errors = 0;
     this.score = 0;
     this.solvedWords = [];
     this.gameWords = [];
-    this.currentLevel=0
+    this.currentLevel = 0;
+    this.playerLevel = data.gameLevel;
+  }
+  getAllWords() {
+    return this.allWords;
   }
   getWords(level) {
-    this.currentLevel=level
+    this.currentLevel = level;
     ////QUE PASA CUANDO EL ARRAY GOLD/SILVER ESTA VACIO? COMO SE ESTABLECE EL NIVEL 1?
     ///Por defecto usa las palabras que alcance
     this.gold.sort(() => Math.random() - 0.5);
@@ -68,13 +73,21 @@ class LevelLogic {
       this.speaker.speak(utterThis);
     }
   }
+  speakText(txt) {
+    const utterThis = new SpeechSynthesisUtterance(txt);
+    utterThis.lang = "es-ES";
+    utterThis.onend = () => {
+      this.speaker.cancel();
+    };
+    this.speaker.speak(utterThis);
+  }
   answerChecker(txt, time, level) {
     if (txt === this.gameWords[this.counter].name) {
-      if (level==="unknown") {
-        this.solvedWords.push({name:txt, level:"silver"});
+      if (level === "unknown") {
+        this.solvedWords.push({ name: txt, level: "silver" });
       }
       this.counter++;
-      this.score = this.score + ((60 - time)*this.currentLevel);
+      this.score = this.score + (60 - time) * this.currentLevel;
       ///API POST
       //this.speak();
       return true;
@@ -84,44 +97,50 @@ class LevelLogic {
       return false;
     }
   }
-  isGold(txt){
-    this.solvedWords.forEach((word)=>{
-      if (word.name===txt) {
-        word.level="gold"
+  isGold(txt) {
+    this.solvedWords.forEach((word) => {
+      if (word.name === txt) {
+        word.level = "gold";
       }
-    })
+    });
   }
   endGame() {
-    if (this.counter>0) {
-      return this.gameWords.length===this.counter
+    //console.log(this.counter);
+    if (this.counter > 0) {
+      return this.gameWords.length === this.counter;
     } else {
-      return false
-    }
-    
-  }
-  end(){
-    if (this.gameWords.length>0 && this.solvedWords.length>0) {
-      this.unknown= this.unknown.filter((itemU)=> !this.solvedWords.some((itemS)=>itemS.name===itemU.name))
-      return true
-    } else {
-      return false
+      return false;
     }
   }
-  getUnknown(){
+  end() {
+    if (this.gameWords.length > 0 && this.solvedWords.length > 0) {
+      this.unknown = this.unknown.filter(
+        (itemU) => !this.solvedWords.some((itemS) => itemS.name === itemU.name)
+      );
+      return true;
+    } else {
+      return false;
+    }
+  }
+  getUnknown() {
     console.log(this.unknown);
   }
-  getResult(){
-    return {words:this.solvedWords, score:this.score}
+  getResult() {
+    return { words: this.solvedWords, score: this.score };
   }
-  newGame(){
+  newGame() {
     this.counter = 0;
     this.errors = 0;
     this.score = 0;
     this.solvedWords = [];
     this.gameWords = [];
-    this.currentLevel=0
+    this.currentLevel = 0;
   }
 }
-const data=await getData("http://127.0.0.1:3000/123456781/level")
-console.log(data.body);
-export const newLevel = new LevelLogic(mockData);
+
+// const data = await getData("https://hs-mock-api-amb7-72yphm920-josedugu.vercel.app/12345/level");
+// export const newLevel=new LevelLogic(data)
+// //console.log(data);
+// // export const newLevel =getData("https://hs-mock-api-amb7-72yphm920-josedugu.vercel.app/12345/level").
+// // then((res)=>new LevelLogic(res)) 
+// // .catch(err=>console.log(err))

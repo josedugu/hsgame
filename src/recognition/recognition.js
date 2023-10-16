@@ -3,6 +3,7 @@ class SpeechRecognitionService {
     this.recognition = null;
     this.transcript = "";
     this.listening = false;
+    this.words = [];
     this.initRecognition();
   }
 
@@ -17,6 +18,8 @@ class SpeechRecognitionService {
       this.recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         this.transcript = transcript;
+        //this.words.push(transcript);
+        //this.showWords();
       };
       this.recognition.onerror = (event) => {
         console.error("Error en reconocimiento de voz:", event.error);
@@ -46,6 +49,9 @@ class SpeechRecognitionService {
 
   getResult() {
     return this.transcript;
+  }
+  showWords() {
+    console.log("Palabras reconocidas:", this.words);
   }
 }
 

@@ -20,13 +20,15 @@ import { levels } from "../ui/levels";
 import { Cellphone } from "../ui/cellphone";
 import Countdown from "../ui/backCount";
 import { GameCard } from "../ui/gameCard";
-import { newLevel } from "../levelLogic/levelLogic";
+//import { newLevel } from "../levelLogic/levelLogic";
 import cat from "../ui/assets/cat.jpg";
 import Img from "../ui/Img";
 import { Logros } from "../ui/logros";
-import { mockData } from "../data/data";
 import { EndScreen } from "../ui/endScreen";
-import { recognitionService } from "../recognition/recognition";
+///import { mockData } from "../data/data";
+// import { recognitionService } from "../recognition/recognition";
+// import { spellChecker } from "./spellChecker";
+import { getData, LevelLogic } from "../levelLogic/levelLogic";
 
 export const Game = () => {
   ///STATES
@@ -41,31 +43,33 @@ export const Game = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogData, setDialogData] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
+  const [allWords, setAllWords] = useState(null);
   const [time, setTime] = useState(0);
   const [showLogros, setShowLogros] = useState(false);
   const [showEndScreen, setShowEndScreen] = useState(false);
+  const [newLevel, setNewLevel]= useState(null)
 
-  if (openDialog) {
-    recognitionService.start();
-    const result = recognitionService.getResult();
-
-    if (dialogData?.name.toLowerCase() === result.toLowerCase()) {
-      newLevel.isGold(dialogData?.name);
-    }
-    setTimeout(() => {
-      recognitionService.stop();
-      setOpenDialog(false);
-    }, 3000);
-  }
+ //console.log(newLevel);
 
   ///FUNCTIONS
   const startTimer = () => {
     setIsRunning(true);
   };
+  const closeDialog=()=>{
+    console.log("closing Dialog");
+    setOpenDialog(false)
+    //newLevel.speak()
+  }
+  //EFFECTS
+  useEffect(()=>{
+    const data= getData("https://hs-mock-api-amb7-72yphm920-josedugu.vercel.app/12345/level")
+    .then((res)=>{console.log("DATA OBTENIDA",data), setNewLevel(new LevelLogic(res))})
+    .catch(err=>console.log(err))
+  },[])
 
-  ////EFFECTS
+
   useEffect(() => {
-    const gameFinished = newLevel.endGame();
+    const gameFinished = newLevel?.endGame();
     let interval;
     if (isRunning) {
       interval = setInterval(() => {
@@ -73,9 +77,10 @@ export const Game = () => {
       }, 1000);
     }
     if (time === 60 || gameFinished) {
+      console.log("Hemos finalizado");
       setIsRunning(false);
-      newLevel.endGame();
-      newLevel.end();
+      newLevel?.endGame();
+      newLevel?.end();
       setShowEndScreen(true);
       setShowWords(false);
       setTime(0);
@@ -84,14 +89,14 @@ export const Game = () => {
     return () => {
       clearInterval(interval);
     };
-  }, [isRunning, time]);
+  }, [isRunning, time,newLevel]);
 
   useEffect(() => {
     if (level > 0) {
       const words = newLevel.getWords(level);
       setWords(words);
     }
-  }, [level]);
+  }, [level,newLevel]);
 
   useEffect(() => {
     const updateScreenWidth = () => {
@@ -115,6 +120,10 @@ export const Game = () => {
       window.removeEventListener("orientationchange", updateScreenOrientation);
     };
   }, [level]);
+  useEffect(() => {
+    const words = newLevel?.getAllWords();
+    setAllWords(words);
+  }, [allWords,newLevel]);
 
   return (
     <div className="game-main-container">
@@ -123,7 +132,7 @@ export const Game = () => {
         open={showLogros}
         onClose={() => setShowLogros(false)}
       >
-        <Logros array={mockData} />
+        <Logros array={allWords} />
       </Drawer>
 
       <Drawer open={drawer}>
@@ -168,7 +177,7 @@ export const Game = () => {
           </IconButton>
           <Stack direction="row" alignItems="center">
             <AlarmIcon
-              onClick={() => newLevel.getUnknown()}
+              onClick={() => newLevel?.getUnknown()}
               fontSize="large"
               sx={{ color: "white" }}
             />
@@ -198,6 +207,7 @@ export const Game = () => {
         </IconButton>
       </AppBar>
       <EndScreen
+      newLevel={newLevel}
         show={showEndScreen}
         setLevel={setLevel}
         setShowEndScreen={setShowEndScreen}
@@ -211,8 +221,7 @@ export const Game = () => {
           alignItems: "center",
         }}
       >
-        {showCounter?(<Countdown />):""}
-        
+        {showCounter ? <Countdown /> : ""}
       </Stack>
       <Stack
         sx={{
@@ -230,19 +239,21 @@ export const Game = () => {
         {words &&
           words.map((word, index) => (
             <GameCard
+            newLevel={newLevel}
               key={index}
               gameLevel={level}
-              url={word.url}
+              url={word?.image?.url}
               wordLevel={word.level}
               name={word.name}
               setWarning={setWarning}
               setOpenDialog={setOpenDialog}
+              closeDialog={closeDialog}
               setDialogData={setDialogData}
               time={time}
             />
           ))}
         <span className={`span-warning ${warning ? "animate" : ""}`}>😐</span>
-        <Dialog open={openDialog}>
+        <Dialog open={openDialog} onClose={closeDialog}> 
           <Stack
             sx={{
               display: "flex",
@@ -257,7 +268,7 @@ export const Game = () => {
             <h1>{dialogData?.name}</h1>
             <Img
               width={300}
-              src={"https://giphy.com/embed/11c7UUfN4eoHF6"}
+              src={dialogData?.url}
               fallbackSrc={cat}
               alt={dialogData?.name}
             />
@@ -293,6 +304,7 @@ export const Game = () => {
           levels.map((level, index) => (
             <CardLevel
               key={index}
+              newLevel={newLevel}
               cardImg={level.cardImg}
               avt={level.avt}
               setter={setLevel}

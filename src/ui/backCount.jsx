@@ -1,11 +1,11 @@
 import { Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 
-const Countdown = () => {
-  const [count, setCount] = useState(5); // Iniciamos la cuenta regresiva en 3
 
+const Countdown = () => {
+  const [count, setCount] = useState(7); // Iniciamos la cuenta regresiva en 3
   useEffect(() => {
-    setTimeout(() => {}, 2000);
+    //setTimeout(() => {}, 2000);
     const interval = setInterval(() => {
       if (count === 0) {
         clearInterval(interval);

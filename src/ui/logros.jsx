@@ -18,13 +18,13 @@ export const Logros = ({array}) => {
             <Avatar sx={{border:`solid 3px ${item?.level==="gold"?"gold":item?.level==="silver"?"silver":"none"}`}}>
               <Img
                 width={100}
-                src={item?.url}
+                src={item?.image?.url}
                 fallbackSrc={cat}
                 alt={item?.name}
               />
             </Avatar>
           </ListItemAvatar>
-          <ListItemText sx={{fontFamily:"Nunito"}} primary={item?.name}  secondary={`🏆: ${item?.level||""}`}/>
+          <ListItemText sx={{fontFamily:"Nunito"}} primary={item?.name}  secondary={`🏆: ${item?.score||""}`}/>
         </ListItem>
         <Divider variant="inset" component="li"/>
         </div>

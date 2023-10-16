@@ -1,11 +1,10 @@
 import ReactDOM from "react-dom/client";
-import { Game } from "./game/game";
 import "./index.css";
 import { ThemeProvider } from "@mui/material";
 import { myTheme } from "./theme";
-
+import { App } from "./app";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ThemeProvider theme={myTheme}>
-    <Game />
+    <App />
   </ThemeProvider>
 );

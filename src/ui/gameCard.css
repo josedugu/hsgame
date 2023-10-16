@@ -1,0 +1,19 @@
+  .x {
+    animation: x 2.6s linear infinite alternate;
+  }
+  
+  .y {
+    animation: y 10s linear infinite alternate;
+  }
+  
+  @keyframes x {
+    100% {
+      transform: translateX( calc(100vw - 100px) );
+    }
+  }
+  
+  @keyframes y {
+    100% {
+      transform: translateY( calc(100vh*0.9 - 100px) );
+    }
+  }

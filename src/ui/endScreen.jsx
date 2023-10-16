@@ -10,13 +10,12 @@ import {
 } from "@mui/material";
 import Img from "./Img";
 import cat from "./assets/cat.jpg";
-import { newLevel } from "../levelLogic/levelLogic";
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 
-export const EndScreen = ({ show,setLevel,setShowEndScreen }) => {
-  const data = newLevel.getResult();
+export const EndScreen = ({ show,setLevel,setShowEndScreen,newLevel }) => {
+  const data = newLevel?.getResult();
   const handleClick=()=>{
-    newLevel.newGame()
+    newLevel?.newGame()
     setShowEndScreen(false)
     setLevel(0)
   }
@@ -31,7 +30,7 @@ export const EndScreen = ({ show,setLevel,setShowEndScreen }) => {
         justifyContent: "center",
       }}
     >
-      <h1>🏆{data.score}</h1>
+      <h1>🏆{data?.score}</h1>
       <List
         sx={{
           p: "16px 16px",
@@ -42,8 +41,8 @@ export const EndScreen = ({ show,setLevel,setShowEndScreen }) => {
           color: "gray",
         }}
       >
-        {data.words &&
-          data.words.map((item, index) => (
+        {data?.words &&
+          data?.words?.map((item, index) => (
             <div key={index}>
               <ListItem sx={{ width: "100%" }}>
                 <ListItemAvatar>
