@@ -1,19 +1,13 @@
-  .x {
-    animation: x 2.6s linear infinite alternate;
-  }
-  
-  .y {
-    animation: y 10s linear infinite alternate;
-  }
-  
-  @keyframes x {
-    100% {
-      transform: translateX( calc(100vw - 100px) );
-    }
-  }
-  
-  @keyframes y {
-    100% {
-      transform: translateY( calc(100vh*0.9 - 100px) );
-    }
-  }
+.bounce{
+  position: relative;
+  display: block;
+  animation: moveX 10s linear 0s infinite alternate, moveY 10s linear 0s infinite alternate;
+}
+
+@keyframes moveX {
+  from { left: 0; } to { left: 90%; }
+}
+
+@keyframes moveY {
+  from { top: 0; } to { top: 400px; }
+}

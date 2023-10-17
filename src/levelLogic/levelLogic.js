@@ -62,6 +62,7 @@ export class LevelLogic {
   }
   speak() {
     if (this.gameWords.length !== this.counter) {
+      console.log("LLAMANDO SPEAK");
       const utterThis = new SpeechSynthesisUtterance(
         this.gameWords[this.counter].name
       );
@@ -138,9 +139,3 @@ export class LevelLogic {
   }
 }
 
-// const data = await getData("https://hs-mock-api-amb7-72yphm920-josedugu.vercel.app/12345/level");
-// export const newLevel=new LevelLogic(data)
-// //console.log(data);
-// // export const newLevel =getData("https://hs-mock-api-amb7-72yphm920-josedugu.vercel.app/12345/level").
-// // then((res)=>new LevelLogic(res)) 
-// // .catch(err=>console.log(err))

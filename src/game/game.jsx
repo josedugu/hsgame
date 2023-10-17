@@ -20,11 +20,11 @@ import { levels } from "../ui/levels";
 import { Cellphone } from "../ui/cellphone";
 import Countdown from "../ui/backCount";
 import { GameCard } from "../ui/gameCard";
-//import { newLevel } from "../levelLogic/levelLogic";
 import cat from "../ui/assets/cat.jpg";
 import Img from "../ui/Img";
 import { Logros } from "../ui/logros";
 import { EndScreen } from "../ui/endScreen";
+//import { newLevel } from "../levelLogic/levelLogic";
 ///import { mockData } from "../data/data";
 // import { recognitionService } from "../recognition/recognition";
 // import { spellChecker } from "./spellChecker";
@@ -47,26 +47,29 @@ export const Game = () => {
   const [time, setTime] = useState(0);
   const [showLogros, setShowLogros] = useState(false);
   const [showEndScreen, setShowEndScreen] = useState(false);
-  const [newLevel, setNewLevel]= useState(null)
+  const [newLevel, setNewLevel] = useState(null);
 
- //console.log(newLevel);
+  //console.log(newLevel);
 
   ///FUNCTIONS
   const startTimer = () => {
     setIsRunning(true);
   };
-  const closeDialog=()=>{
+  const closeDialog = () => {
     console.log("closing Dialog");
-    setOpenDialog(false)
+    setOpenDialog(false);
     //newLevel.speak()
-  }
+  };
   //EFFECTS
-  useEffect(()=>{
-    const data= getData("https://hs-mock-api-amb7-72yphm920-josedugu.vercel.app/12345/level")
-    .then((res)=>{console.log("DATA OBTENIDA",data), setNewLevel(new LevelLogic(res))})
-    .catch(err=>console.log(err))
-  },[])
-
+  useEffect(() => {
+    const data = getData(
+      "https://hs-mock-api-amb7-72yphm920-josedugu.vercel.app/12345/level"
+    )
+      .then((res) => {
+        console.log("DATA OBTENIDA", data), setNewLevel(new LevelLogic(res));
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   useEffect(() => {
     const gameFinished = newLevel?.endGame();
@@ -76,7 +79,7 @@ export const Game = () => {
         setTime((prevTime) => prevTime + 1);
       }, 1000);
     }
-    if (time === 60 || gameFinished) {
+    if (time === 1000 || gameFinished) {
       console.log("Hemos finalizado");
       setIsRunning(false);
       newLevel?.endGame();
@@ -89,14 +92,14 @@ export const Game = () => {
     return () => {
       clearInterval(interval);
     };
-  }, [isRunning, time,newLevel]);
+  }, [isRunning, time, newLevel]);
 
   useEffect(() => {
     if (level > 0) {
       const words = newLevel.getWords(level);
       setWords(words);
     }
-  }, [level,newLevel]);
+  }, [level, newLevel]);
 
   useEffect(() => {
     const updateScreenWidth = () => {
@@ -123,7 +126,7 @@ export const Game = () => {
   useEffect(() => {
     const words = newLevel?.getAllWords();
     setAllWords(words);
-  }, [allWords,newLevel]);
+  }, [allWords, newLevel]);
 
   return (
     <div className="game-main-container">
@@ -207,7 +210,7 @@ export const Game = () => {
         </IconButton>
       </AppBar>
       <EndScreen
-      newLevel={newLevel}
+        newLevel={newLevel}
         show={showEndScreen}
         setLevel={setLevel}
         setShowEndScreen={setShowEndScreen}
@@ -224,13 +227,14 @@ export const Game = () => {
         {showCounter ? <Countdown /> : ""}
       </Stack>
       <Stack
+        id="showWords-container"
         sx={{
+          position:"relative",
           display: showWords ? "flex" : "none",
           width: "100%",
           height: "90%",
           justifyContent: "center",
           alignItems: "center",
-          position: "relative",
           border: "solid 1px white",
           flexWrap: "wrap",
           gap: "8px",
@@ -239,7 +243,8 @@ export const Game = () => {
         {words &&
           words.map((word, index) => (
             <GameCard
-            newLevel={newLevel}
+              index={index}
+              newLevel={newLevel}
               key={index}
               gameLevel={level}
               url={word?.image?.url}
@@ -253,7 +258,7 @@ export const Game = () => {
             />
           ))}
         <span className={`span-warning ${warning ? "animate" : ""}`}>😐</span>
-        <Dialog open={openDialog} onClose={closeDialog}> 
+        <Dialog open={openDialog} onClose={closeDialog}>
           <Stack
             sx={{
               display: "flex",

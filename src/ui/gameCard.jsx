@@ -1,6 +1,6 @@
-import './gameCard.css'
-import { Typography } from "@mui/material";
-import { useState, useEffect, useMemo } from "react";
+import "./gameCard.css";
+import { Avatar, Stack } from "@mui/material";
+import { keyframes } from "@mui/system";
 
 export const GameCard = ({
   newLevel,
@@ -13,59 +13,8 @@ export const GameCard = ({
   setDialogData,
   time,
   closeDialog,
+  index,
 }) => {
-  const [position, setPosition] = useState({ top: 0, left: 0 });
-  const [pause, setPause] = useState(false);
-
-  const randomPosition = useMemo(() => {
-    const top = Math.abs(Math.random() * (window.innerHeight * 0.9 - 200));
-    const left = Math.abs(Math.random() * (window.innerWidth - 200));
-    return { top, left };
-  }, []);
-
-  const styles = {
-    //position:"fixed",
-    cursor: "pointer",
-    p: "4px 8px",
-    backdropFilter: "blur(16px) saturate(180%)",
-    backgroundColor: "rgba(17, 25, 40, 0.75)",
-    borderRadius: "12px",
-    border: "1px solid rgba(255, 255, 255, 0.125)",
-    transition: "all linear infinite alternate"
-  };
-  useEffect(() => {
-    if (gameLevel % 2 === 0 || gameLevel === 5) {
-      const moveCircle = () => {
-        const top = Math.abs(Math.random() * (window.innerHeight * 0.9 - 200));
-        const left = Math.abs(Math.random() * window.innerWidth - 200);
-
-        const newPosition = {
-          top: top,
-          left: left,
-        };
-        setPosition(newPosition);
-      };
-      let interval;
-      if (gameLevel === 5) {
-        interval = setInterval(moveCircle, 800);
-      }
-      interval = setInterval(moveCircle, 2000);
-      if (pause) {
-        clearInterval(interval);
-      }
-      return () => clearInterval(interval);
-    }
-  }, [pause, gameLevel]);
-  if (gameLevel % 2 === 0 || gameLevel === 5) {
-    styles.position = "absolute";
-    styles.top = position.top;
-    styles.left = position.left;
-  } else {
-    styles.position = "absolute";
-    styles.top = randomPosition.top;
-    styles.left = randomPosition.left;
-  }
-
   const handleClick = async () => {
     console.log(url);
     //setPause(true);
@@ -88,6 +37,7 @@ export const GameCard = ({
         recognition.lang = "es-ES";
         recognition.continuous = true;
         recognition.interimResults = true;
+        let hasSpoken = false;
 
         const rec = setTimeout(() => {
           console.log("FIN DEL INTENTO"), recognition.stop();
@@ -98,12 +48,22 @@ export const GameCard = ({
         recognition.onresult = (event) => {
           const transcript = event.results[0][0].transcript;
           console.log(transcript);
-
-          if (transcript.includes(name)) {
+          ///EL INTERVAL SE ACTUALIZA CADA SEGUNDO AL PARECER PORQUE EL PADRE TAMBIEN LO HACE
+          ///NECESITO HACER UNA VALIDACION CADA CIERTO TIEMPO PARA CREAR LOS INTENTOS
+          // const int= setInterval(() => {
+          //   if (transcript.includes(name) && !hasSpoken) {
+          // console.log("respuesta correcta en interval");
+          //   }else{
+          //     console.log("respuesta INcorrecta en interval");
+          //   }
+          // }, 5000);
+          if (transcript.includes(name) && !hasSpoken) {
             clearTimeout(rec);
+            //clearInterval(int)
             recognition.stop();
             closeDialog();
             newLevel.speak();
+            hasSpoken = true;
           }
         };
         recognition.onerror = (event) => {
@@ -120,12 +80,45 @@ export const GameCard = ({
       }
     }
   };
+  //console.log(`The game level for ${name} is ${gameLevel}`);
+  const bounceX = keyframes`from { left: 0; } to { left: 90%; }`;
+  const bounceY = keyframes`from { top: ${index * 100}px; } to { top: 500px; }`;
+  const bounceRightX = keyframes`from { left: 90%; } to { left: 0; }`;
+  const bounceRightY = keyframes`from { top:500px;  } to { top: ${
+    index * 100
+  }px; }`;
+
+  const bounceStiles = {
+    cursor: "pointer",
+    position: gameLevel === 1 || gameLevel === 3 ? "" : "absolute",
+    animation:
+      gameLevel === 1 || gameLevel === 3
+        ? "none"
+        : `${bounceX} ${
+            gameLevel === 5 ? 4 : 9
+          }s linear 0s infinite alternate, ${bounceY} ${
+            gameLevel === 5 ? 4 : 9
+          }s linear 0s infinite alternate;`,
+  };
+  const bounceStilesRight = {
+    cursor: "pointer",
+    position: gameLevel === 1 || gameLevel === 3 ? "" : "absolute",
+    animation:
+      gameLevel === 1 || gameLevel === 3
+        ? "none"
+        : `${bounceRightX} ${
+            gameLevel === 5 ? 4 : 9
+          }s linear 0s infinite alternate, ${bounceRightY} ${
+            gameLevel === 5 ? 4 : 9
+          }s linear 0s infinite alternate;`,
+  };
 
   return (
-    <div  >
-    <Typography sx={styles}   onClick={handleClick} >
-      {name}
-    </Typography>
-    </div>
+    <Stack
+      onClick={handleClick}
+      sx={index % 2 === 0 ? bounceStiles : bounceStilesRight}
+    >
+      <Avatar alt={name} src={url} sx={{ width: "100px", height: "100px" }} />
+    </Stack>
   );
 };
