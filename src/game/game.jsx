@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./game.css";
 import {
   AppBar,
@@ -7,11 +7,9 @@ import {
   IconButton,
   Stack,
   Drawer,
-  Dialog,
 } from "@mui/material";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import Face6Icon from "@mui/icons-material/Face6";
-import AlarmIcon from "@mui/icons-material/Alarm";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import CloseIcon from "@mui/icons-material/Close";
@@ -20,15 +18,10 @@ import { levels } from "../ui/levels";
 import { Cellphone } from "../ui/cellphone";
 import Countdown from "../ui/backCount";
 import { GameCard } from "../ui/gameCard";
-import cat from "../ui/assets/cat.jpg";
-import Img from "../ui/Img";
 import { Logros } from "../ui/logros";
 import { EndScreen } from "../ui/endScreen";
-//import { newLevel } from "../levelLogic/levelLogic";
-///import { mockData } from "../data/data";
-// import { recognitionService } from "../recognition/recognition";
-// import { spellChecker } from "./spellChecker";
 import { getData, LevelLogic } from "../levelLogic/levelLogic";
+import Timer from "../ui/timer";
 
 export const Game = () => {
   ///STATES
@@ -36,31 +29,26 @@ export const Game = () => {
   const [screenWidth, setScreenWidth] = useState(0);
   const [screenOrientation, setScreenOrientation] = useState(0);
   const [level, setLevel] = useState(0);
+  const [newLevel, setNewLevel] = useState(null);
+  const [allowedLevels, setAllowedLevels] = useState(null);
   const [showCounter, setShowCounter] = useState(false);
   const [showWords, setShowWords] = useState(false);
   const [words, setWords] = useState(null);
-  const [warning, setWarning] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [dialogData, setDialogData] = useState(false);
-  const [isRunning, setIsRunning] = useState(false);
+  const [warning, setWarning] = useState([]);
   const [allWords, setAllWords] = useState(null);
-  const [time, setTime] = useState(0);
   const [showLogros, setShowLogros] = useState(false);
   const [showEndScreen, setShowEndScreen] = useState(false);
-  const [newLevel, setNewLevel] = useState(null);
 
-  //console.log(newLevel);
+  const timerRef = useRef();
 
   ///FUNCTIONS
   const startTimer = () => {
-    setIsRunning(true);
+    timerRef.current.start();
   };
-  const closeDialog = () => {
-    console.log("closing Dialog");
-    setOpenDialog(false);
-    //newLevel.speak()
+  const checkAnswer = (name, wordLevel) => {
+    return timerRef.current.checkAnswer(name, wordLevel);
   };
-  //EFFECTS
+
   useEffect(() => {
     const data = getData(
       "https://hs-mock-api-amb7-72yphm920-josedugu.vercel.app/12345/level"
@@ -70,29 +58,6 @@ export const Game = () => {
       })
       .catch((err) => console.log(err));
   }, []);
-
-  useEffect(() => {
-    const gameFinished = newLevel?.endGame();
-    let interval;
-    if (isRunning) {
-      interval = setInterval(() => {
-        setTime((prevTime) => prevTime + 1);
-      }, 1000);
-    }
-    if (time === 1000 || gameFinished) {
-      console.log("Hemos finalizado");
-      setIsRunning(false);
-      newLevel?.endGame();
-      newLevel?.end();
-      setShowEndScreen(true);
-      setShowWords(false);
-      setTime(0);
-    }
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [isRunning, time, newLevel]);
 
   useEffect(() => {
     if (level > 0) {
@@ -125,7 +90,10 @@ export const Game = () => {
   }, [level]);
   useEffect(() => {
     const words = newLevel?.getAllWords();
+    const allowedLevels = newLevel?.getAllowedLevels();
+
     setAllWords(words);
+    setAllowedLevels(allowedLevels);
   }, [allWords, newLevel]);
 
   return (
@@ -173,19 +141,18 @@ export const Game = () => {
             <SportsEsportsIcon fontSize="large" sx={{ color: "white" }} />
           </IconButton>
           <IconButton
+            onClick={() => newLevel?.getData()}
             color="primary"
             sx={{ display: { xs: "none", md: "flex" } }}
           >
             <Face6Icon fontSize="large" sx={{ color: "white" }} />
           </IconButton>
-          <Stack direction="row" alignItems="center">
-            <AlarmIcon
-              onClick={() => newLevel?.getUnknown()}
-              fontSize="large"
-              sx={{ color: "white" }}
-            />
-            <Typography variant="h4"> : {time || "00"}</Typography>
-          </Stack>
+          <Timer
+            ref={timerRef}
+            newLevel={newLevel}
+            setShowEndScreen={setShowEndScreen}
+            setShowWords={setShowWords}
+          />
           <Stack
             direction="row"
             alignItems="center"
@@ -229,7 +196,7 @@ export const Game = () => {
       <Stack
         id="showWords-container"
         sx={{
-          position:"relative",
+          position: "relative",
           display: showWords ? "flex" : "none",
           width: "100%",
           height: "90%",
@@ -248,37 +215,22 @@ export const Game = () => {
               key={index}
               gameLevel={level}
               url={word?.image?.url}
-              wordLevel={word.level}
+              wordLevel={word.score[0]}
               name={word.name}
               setWarning={setWarning}
-              setOpenDialog={setOpenDialog}
-              closeDialog={closeDialog}
-              setDialogData={setDialogData}
-              time={time}
+              checkAnswer={checkAnswer}
             />
           ))}
-        <span className={`span-warning ${warning ? "animate" : ""}`}>😐</span>
-        <Dialog open={openDialog} onClose={closeDialog}>
-          <Stack
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              p: "16px 16px",
-              gap: "8px",
-              cursor: "pointer",
-              backdropFilter: "blur(16px) saturate(180%)",
-              bgcolor: "rgba(17, 25, 40, 0.75)",
-            }}
-          >
-            <h1>{dialogData?.name}</h1>
-            <Img
-              width={300}
-              src={dialogData?.url}
-              fallbackSrc={cat}
-              alt={dialogData?.name}
-            />
-          </Stack>
-        </Dialog>
+        {warning &&
+          warning.length > 0 &&
+          warning.map((_, index) => (
+            <span
+              key={index}
+              className={`span-warning ${warning ? "animate" : ""}`}
+            >
+              😐
+            </span>
+          ))}
       </Stack>
       <Stack
         sx={{
@@ -308,6 +260,7 @@ export const Game = () => {
         {levels &&
           levels.map((level, index) => (
             <CardLevel
+              allowedLevels={allowedLevels}
               key={index}
               newLevel={newLevel}
               cardImg={level.cardImg}

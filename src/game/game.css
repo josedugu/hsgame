@@ -11,8 +11,8 @@
 }
 .span-warning.animate{
   display: block;
-  -webkit-animation: scale-up-bottom 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
-	        animation: scale-up-bottom 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both
+  -webkit-animation: scale-up-bottom 1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+	        animation: scale-up-bottom 1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both
 }
 
 .game-cards-container{
@@ -66,12 +66,31 @@
     -webkit-transform-origin: 50% 100%;
             transform-origin: 50% 100%;
   }
-  100% {
+  80% {
     -webkit-transform: scale(1);
-            transform: scale(1);
+            transform: scale(1) rotateY(360deg);
+    -webkit-transform-origin: 50% 100%;
+            transform-origin: 50% 100%;
+  }
+  100% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
     -webkit-transform-origin: 50% 100%;
             transform-origin: 50% 100%;
   }
 }
 
-
+@keyframes scale-rotate-disappear {
+  0% {
+    transform: scale(0.5) translateY(0);
+    transform-origin: 50% 100%;
+  }
+  50% {
+    transform: scale(0.5) translateY(0) rotate(360deg);
+    transform-origin: 50% 100%;
+  }
+  100% {
+    transform: scale(0.5) translateY(100%) rotate(360deg);
+    transform-origin: 50% 100%;
+  }
+}

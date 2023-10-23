@@ -1,4 +1,5 @@
 import "./cards.css";
+import { useEffect } from "react";
 export const CardLevel = ({
   cardImg,
   avt,
@@ -7,25 +8,37 @@ export const CardLevel = ({
   showCounter,
   setCanvas,
   startTimer,
-  newLevel
+  newLevel,
+  allowedLevels,
 }) => {
+  useEffect(()=>{
+    return newLevel?.stopSpeaking()
+  },[newLevel])
+
   const handleClcik = () => {
-    newLevel.speakText("Muy bien, vamos a empezar, recuerda hacer clic en la imagen del animal que escuches")
-    setter(level);
-    showCounter(true);
-    setTimeout(() => {
-      showCounter(false), 
-      setCanvas(true);
-      if (newLevel) {
-        newLevel.speak();
-        startTimer(true);
-      } else {
-        console.log("NO LLEGO newGame");
-      }
-    }, 8000);
+    if (level <= allowedLevels) {
+      newLevel.speakText(
+        "Muy bien, vamos a empezar, recuerda hacer clic en la imagen del animal que escuches"
+      );
+      setter(level);
+      showCounter(true);
+      setTimeout(() => {
+        showCounter(false), setCanvas(true);
+        if (newLevel) {
+          newLevel.speak();
+          startTimer(true);
+        } else {
+          console.log("NO LLEGO newGame");
+        }
+      }, 8000);
+    }else{
+      newLevel.speakText(
+        "Aun no haz desbloqueado este nivel"
+      );
+    }
   };
   return (
-    <div onClick={handleClcik} className="card-main-container">
+    <div onClick={handleClcik} className={`card-main-container ${level <= allowedLevels?"":"not-allowed"}`}>
       <img src={cardImg} />
       <img src={avt} />
     </div>

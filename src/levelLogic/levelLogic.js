@@ -15,6 +15,8 @@ export const getData = async (url) => {
 
 export class LevelLogic {
   constructor(data) {
+    this.data=data
+    this.allowedLevels=data.gameLevel
     this.gold = data.words.filter((word) => word.score[0] === "gold");
     this.silver = data.words.filter((word) => word.score[0] === "silver");
     this.unknown = data.words.filter((word) => word.score[0] === "unknown");
@@ -26,10 +28,15 @@ export class LevelLogic {
     this.solvedWords = [];
     this.gameWords = [];
     this.currentLevel = 0;
-    this.playerLevel = data.gameLevel;
+  }
+  getData(){
+    console.log(this.data);
   }
   getAllWords() {
     return this.allWords;
+  }
+  getAllowedLevels() {
+    return this.allowedLevels;
   }
   getWords(level) {
     this.currentLevel = level;
@@ -82,7 +89,12 @@ export class LevelLogic {
     };
     this.speaker.speak(utterThis);
   }
+  stopSpeaking(){
+    this.speaker.pause();
+    this.speaker.cancel();
+  }
   answerChecker(txt, time, level) {
+    console.log(txt, time, level);
     if (txt === this.gameWords[this.counter].name) {
       if (level === "unknown") {
         this.solvedWords.push({ name: txt, level: "silver" });
