@@ -197,13 +197,14 @@ export const Game = () => {
         {showCounter ? <Countdown /> : ""}
       </Stack>
     
+       {showWords && 
         <WordsContainer
           words={words}
           newLevel={newLevel}
           level={level}
           showWords={showWords}
           checkAnswer={checkAnswer}
-        />
+        />}
     
       <Stack
         sx={{
