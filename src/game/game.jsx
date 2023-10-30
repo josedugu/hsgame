@@ -17,7 +17,7 @@ import { CardLevel } from "../ui/levelCard";
 import { levels } from "../ui/levels";
 import { Cellphone } from "../ui/cellphone";
 import Countdown from "../ui/backCount";
-import { GameCard } from "../ui/gameCard";
+import { WordsContainer } from "../ui/wordsContainer";
 import { Logros } from "../ui/logros";
 import { EndScreen } from "../ui/endScreen";
 import { getData, LevelLogic } from "../levelLogic/levelLogic";
@@ -34,13 +34,13 @@ export const Game = () => {
   const [showCounter, setShowCounter] = useState(false);
   const [showWords, setShowWords] = useState(false);
   const [words, setWords] = useState(null);
-  const [warning, setWarning] = useState([]);
   const [allWords, setAllWords] = useState(null);
   const [showLogros, setShowLogros] = useState(false);
   const [showEndScreen, setShowEndScreen] = useState(false);
 
   const timerRef = useRef();
-
+  // const angle = (2 * Math.PI) / numChildren;
+  // const radius = 80;
   ///FUNCTIONS
   const startTimer = () => {
     timerRef.current.start();
@@ -67,6 +67,14 @@ export const Game = () => {
   }, [level, newLevel]);
 
   useEffect(() => {
+    const words = newLevel?.getAllWords();
+    const allowedLevels = newLevel?.getAllowedLevels();
+
+    setAllWords(words);
+    setAllowedLevels(allowedLevels);
+  }, [allWords, newLevel]);
+
+  useEffect(() => {
     const updateScreenWidth = () => {
       const width = window.innerWidth;
       setScreenWidth(width);
@@ -88,13 +96,6 @@ export const Game = () => {
       window.removeEventListener("orientationchange", updateScreenOrientation);
     };
   }, [level]);
-  useEffect(() => {
-    const words = newLevel?.getAllWords();
-    const allowedLevels = newLevel?.getAllowedLevels();
-
-    setAllWords(words);
-    setAllowedLevels(allowedLevels);
-  }, [allWords, newLevel]);
 
   return (
     <div className="game-main-container">
@@ -176,6 +177,8 @@ export const Game = () => {
           <ExitToAppIcon fontSize="large" color="warning" />
         </IconButton>
       </AppBar>
+
+
       <EndScreen
         newLevel={newLevel}
         show={showEndScreen}
@@ -193,45 +196,15 @@ export const Game = () => {
       >
         {showCounter ? <Countdown /> : ""}
       </Stack>
-      <Stack
-        id="showWords-container"
-        sx={{
-          position: "relative",
-          display: showWords ? "flex" : "none",
-          width: "100%",
-          height: "90%",
-          justifyContent: "center",
-          alignItems: "center",
-          border: "solid 1px white",
-          flexWrap: "wrap",
-          gap: "8px",
-        }}
-      >
-        {words &&
-          words.map((word, index) => (
-            <GameCard
-              index={index}
-              newLevel={newLevel}
-              key={index}
-              gameLevel={level}
-              url={word?.image?.url}
-              wordLevel={word.score[0]}
-              name={word.name}
-              setWarning={setWarning}
-              checkAnswer={checkAnswer}
-            />
-          ))}
-        {warning &&
-          warning.length > 0 &&
-          warning.map((_, index) => (
-            <span
-              key={index}
-              className={`span-warning ${warning ? "animate" : ""}`}
-            >
-              😐
-            </span>
-          ))}
-      </Stack>
+    
+        <WordsContainer
+          words={words}
+          newLevel={newLevel}
+          level={level}
+          showWords={showWords}
+          checkAnswer={checkAnswer}
+        />
+    
       <Stack
         sx={{
           display:
