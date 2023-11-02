@@ -1,16 +1,23 @@
 import { useState } from "react";
 import { GameCard } from "./gameCard";
 
-export const WordsContainer = ({ words, newLevel, level, checkAnswer,showWords }) => {
+export const WordsContainer = ({
+  words,
+  newLevel,
+  level,
+  checkAnswer,
+  showWords,
+}) => {
   const [warning, setWarning] = useState([]);
-  const quantity= words?.length;
-  const screenWidth=window.innerHeight;
-  const screenHeight=window.innerHeight;
+  const screenWidth = window.innerWidth;
+  const screenHeight = window.innerHeight;
+  const aspectRatio=screenWidth/screenHeight
+  console.log(`aspect ratio ${aspectRatio} width ${screenWidth} heigth ${screenHeight}`);
   return (
     <div
       id="showWords-container"
       style={{
-        display: showWords?"flex":"none",
+        display: showWords ? "flex" : "none",
         position: "relative",
         width: "100%",
         height: "90%",
@@ -23,10 +30,8 @@ export const WordsContainer = ({ words, newLevel, level, checkAnswer,showWords }
     >
       {words &&
         words.map((word, index) => {
-
           return (
             <GameCard
-              index={index}
               newLevel={newLevel}
               key={index}
               gameLevel={level}
@@ -35,7 +40,6 @@ export const WordsContainer = ({ words, newLevel, level, checkAnswer,showWords }
               name={word.name}
               setWarning={setWarning}
               checkAnswer={checkAnswer}
-              quantity={quantity}
               screenWidth={screenWidth}
               screenHeight={screenHeight}
             />

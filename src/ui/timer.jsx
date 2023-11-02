@@ -1,5 +1,6 @@
 import AlarmIcon from "@mui/icons-material/Alarm";
-import {Typography,Stack} from "@mui/material";
+import {Typography,Stack,useTheme} from "@mui/material";
+
 
 import { forwardRef, useImperativeHandle, useState, useEffect } from "react";
 
@@ -7,6 +8,7 @@ const Timer = forwardRef((props, ref) => {
   const { newLevel, setShowEndScreen, setShowWords } = props;
   const [time, setTimer] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const theme =useTheme()
 
   const exposedFunctions ={
     start:()=>{setIsRunning(true)},
@@ -50,7 +52,11 @@ const Timer = forwardRef((props, ref) => {
         fontSize="large"
         sx={{ color: "white" }}
       />
-      <Typography variant="h4"> : {time || "00"}</Typography>
+      <Typography sx={{
+        [theme.breakpoints.down('md')]:{
+          fontSize:"24px"
+        }
+      }} variant="h4"> : {time || "00"}</Typography>
     </Stack>
   );
 });

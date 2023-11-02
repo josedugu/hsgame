@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 
 
 const Countdown = () => {
-  const [count, setCount] = useState(1); // Iniciamos la cuenta regresiva en 3
+  const [count, setCount] = useState(7); // Iniciamos la cuenta regresiva en 3
   useEffect(() => {
     //setTimeout(() => {}, 2000);
     const interval = setInterval(() => {

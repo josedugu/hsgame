@@ -39,8 +39,6 @@ export const Game = () => {
   const [showEndScreen, setShowEndScreen] = useState(false);
 
   const timerRef = useRef();
-  // const angle = (2 * Math.PI) / numChildren;
-  // const radius = 80;
   ///FUNCTIONS
   const startTimer = () => {
     timerRef.current.start();
@@ -69,7 +67,6 @@ export const Game = () => {
   useEffect(() => {
     const words = newLevel?.getAllWords();
     const allowedLevels = newLevel?.getAllowedLevels();
-
     setAllWords(words);
     setAllowedLevels(allowedLevels);
   }, [allWords, newLevel]);
@@ -179,12 +176,12 @@ export const Game = () => {
       </AppBar>
 
 
-      <EndScreen
+     {showEndScreen&& <EndScreen
         newLevel={newLevel}
         show={showEndScreen}
         setLevel={setLevel}
         setShowEndScreen={setShowEndScreen}
-      />
+      />}
       <Stack
         sx={{
           display: showCounter ? "flex" : "none",

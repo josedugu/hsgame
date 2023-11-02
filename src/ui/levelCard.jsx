@@ -30,7 +30,7 @@ export const CardLevel = ({
         } else {
           console.log("NO LLEGO newGame");
         }
-      }, 1000);
+      }, 7000);
     }else{
       newLevel.speakText(
         "Aun no haz desbloqueado este nivel"
