@@ -23,14 +23,15 @@ export const CardLevel = ({
       setter(level);
       showCounter(true);
       setTimeout(() => {
-        showCounter(false), setCanvas(true);
+        showCounter(false), 
+        setCanvas(true);
         if (newLevel) {
           newLevel.speak();
           startTimer(true);
         } else {
           console.log("NO LLEGO newGame");
         }
-      }, 7000);
+      }, 8000);
     }else{
       newLevel.speakText(
         "Aun no haz desbloqueado este nivel"

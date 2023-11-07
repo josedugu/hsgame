@@ -1,9 +1,11 @@
 import "./gameCard.css";
 import { Avatar, Stack } from "@mui/material";
 import { keyframes } from "@mui/system";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import GameDialog from "./gameDialog";
 import { useTheme } from "@mui/material";
+
+
 export const GameCard = ({
   newLevel,
   url,
@@ -15,6 +17,7 @@ export const GameCard = ({
   screenHeight,
   screenWidth,
 }) => {
+  const [spoken, setSpoken]=useState(false)
   const dialogRef = useRef();
   const theme = useTheme()
   let elementSize=100;
@@ -133,16 +136,18 @@ export const GameCard = ({
   };
 
   const handleClick = async () => {
+    //console.log(name, wordLevel, url);
     const check = checkAnswer(name, wordLevel);
-    console.log(check);
+    //console.log(check);
     if (check) {
-      dialogRef.current.openDialog();
+      //setIsOpen(true)
+      dialogRef?.current?.openDialogFunction();
     } else {
       setWarning((prev) => [...prev, 1]);
     }
   };
-  const goldWord = (txt) => {
-    newLevel?.isGold(txt);
+  const goldWord = (name, newWordLevel, url) => {
+    newLevel?.updateWordLevel(name, newWordLevel, url);
   };
   const nextWord = () => {
     newLevel?.speak();
@@ -172,12 +177,14 @@ export const GameCard = ({
         width: "50px", height: "50px",
       }
     }} />
-      <GameDialog
+     <GameDialog
         ref={dialogRef}
         name={name}
         url={url}
         goldWord={goldWord}
         nextWord={nextWord}
+        spoken={spoken}
+        setSpoken={setSpoken}
       />
     </Stack>
   );

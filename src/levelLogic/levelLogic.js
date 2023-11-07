@@ -1,4 +1,5 @@
-//import { mockData } from "../data/data";
+import { changeWordLevel } from "./functions";
+
 export const getData = async (url) => {
   try {
     const response = await fetch(url);
@@ -15,8 +16,8 @@ export const getData = async (url) => {
 
 export class LevelLogic {
   constructor(data) {
-    this.data=data
-    this.allowedLevels=data.gameLevel
+    this.data = data;
+    this.allowedLevels = data.gameLevel;
     this.gold = data.words.filter((word) => word.score[0] === "gold");
     this.silver = data.words.filter((word) => word.score[0] === "silver");
     this.unknown = data.words.filter((word) => word.score[0] === "unknown");
@@ -29,7 +30,7 @@ export class LevelLogic {
     this.gameWords = [];
     this.currentLevel = 0;
   }
-  getData(){
+  getData() {
     console.log(this.data);
   }
   getAllWords() {
@@ -37,6 +38,9 @@ export class LevelLogic {
   }
   getAllowedLevels() {
     return this.allowedLevels;
+  }
+  getSolvedWords(){
+    console.log(this.solvedWords);
   }
   getWords(level) {
     this.currentLevel = level;
@@ -69,7 +73,7 @@ export class LevelLogic {
   }
   speak() {
     if (this.gameWords.length !== this.counter) {
-      console.log("LLAMANDO SPEAK");
+      ///console.log("LLAMANDO SPEAK");
       const utterThis = new SpeechSynthesisUtterance(
         this.gameWords[this.counter].name
       );
@@ -89,20 +93,20 @@ export class LevelLogic {
     };
     this.speaker.speak(utterThis);
   }
-  stopSpeaking(){
+  stopSpeaking() {
     this.speaker.pause();
     this.speaker.cancel();
   }
-  answerChecker(txt, time, level) {
-    console.log(txt, time, level);
-    if (txt === this.gameWords[this.counter].name) {
-      if (level === "unknown") {
-        this.solvedWords.push({ name: txt, level: "silver" });
-      }
-      this.counter++;
+  answerChecker(name, time) {
+    //console.log(name, time, level,url);
+    if (name === this.gameWords[this.counter].name) {
+      // if (level === "unknown") {
+      //   this.solvedWords.push({ name: name, level: "silver",url });
+      // }
+      // this.counter++;
       this.score = this.score + (60 - time) * this.currentLevel;
-      ///API POST
-      //this.speak();
+      // ///API POST
+      // //this.speak();
       return true;
     } else {
       this.errors--;
@@ -110,12 +114,27 @@ export class LevelLogic {
       return false;
     }
   }
-  isGold(txt) {
-    this.solvedWords.forEach((word) => {
-      if (word.name === txt) {
-        word.level = "gold";
-      }
+  updateWordLevel(name, newWordLevel, url) {
+    const studentKey = "12345";
+    const makePOST = this.solvedWords.some((word) => {
+      word.name === name;
     });
+    //console.log("this.solvedWords",this.solvedWords);
+    //console.log("makePOST",makePOST);
+    if (!makePOST) {
+      if (newWordLevel !== "unknown") {
+        this.solvedWords.push({ name, level: newWordLevel, url });
+      } else {
+        return;
+      }
+      changeWordLevel([name], studentKey)
+        ///.then((response) => console.log("updateWordLevel SUCCESS", response))
+        .catch((e) => {
+          console.log("ERROR EN updateWordLevel", e);
+        });
+      ///this.solvedWords.push({ name: name, level: newWordLevel, url });
+      this.counter++;
+    }
   }
   endGame() {
     //console.log(this.counter);
@@ -150,4 +169,3 @@ export class LevelLogic {
     this.currentLevel = 0;
   }
 }
-

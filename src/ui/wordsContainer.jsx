@@ -11,8 +11,8 @@ export const WordsContainer = ({
   const [warning, setWarning] = useState([]);
   const screenWidth = window.innerWidth;
   const screenHeight = window.innerHeight;
-  const aspectRatio=screenWidth/screenHeight
-  console.log(`aspect ratio ${aspectRatio} width ${screenWidth} heigth ${screenHeight}`);
+  //const aspectRatio=screenWidth/screenHeight
+  //console.log(`aspect ratio ${aspectRatio} width ${screenWidth} heigth ${screenHeight}`);
   return (
     <div
       id="showWords-container"

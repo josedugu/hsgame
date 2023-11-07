@@ -37,7 +37,7 @@ export const Game = () => {
   const [allWords, setAllWords] = useState(null);
   const [showLogros, setShowLogros] = useState(false);
   const [showEndScreen, setShowEndScreen] = useState(false);
-
+  
   const timerRef = useRef();
   ///FUNCTIONS
   const startTimer = () => {
@@ -139,7 +139,7 @@ export const Game = () => {
             <SportsEsportsIcon fontSize="large" sx={{ color: "white" }} />
           </IconButton>
           <IconButton
-            onClick={() => newLevel?.getData()}
+            onClick={() => newLevel?.getSolvedWords()}
             color="primary"
             sx={{ display: { xs: "none", md: "flex" } }}
           >
