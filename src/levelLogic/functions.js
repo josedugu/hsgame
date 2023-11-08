@@ -1,5 +1,5 @@
-///const url = "https://hs-mock-api-amb7.vercel.app/";
-const url='http://127.0.0.1:3001/';
+const url = "https://hs-mock-api-amb7.vercel.app/";
+///const url='http://127.0.0.1:3001/';
 
 export const changeWordLevel = (word, studentKey) => {
   const urlupdateWord= url+"updateWord";
