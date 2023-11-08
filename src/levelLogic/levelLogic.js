@@ -1,4 +1,4 @@
-import { changeWordLevel } from "./functions";
+import { changeWordLevel, updateStudentGameLevel } from "./functions";
 
 export const getData = async (url) => {
   try {
@@ -30,6 +30,7 @@ export class LevelLogic {
     this.gameWords = [];
     this.currentLevel = 0;
   }
+
   getData() {
     console.log(this.data);
   }
@@ -37,9 +38,10 @@ export class LevelLogic {
     return this.allWords;
   }
   getAllowedLevels() {
+    console.log(`El nivel de juego es ${this.allowedLevels}`);
     return this.allowedLevels;
   }
-  getSolvedWords(){
+  getSolvedWords() {
     console.log(this.solvedWords);
   }
   getWords(level) {
@@ -98,15 +100,8 @@ export class LevelLogic {
     this.speaker.cancel();
   }
   answerChecker(name, time) {
-    //console.log(name, time, level,url);
     if (name === this.gameWords[this.counter].name) {
-      // if (level === "unknown") {
-      //   this.solvedWords.push({ name: name, level: "silver",url });
-      // }
-      // this.counter++;
       this.score = this.score + (60 - time) * this.currentLevel;
-      // ///API POST
-      // //this.speak();
       return true;
     } else {
       this.errors--;
@@ -134,6 +129,16 @@ export class LevelLogic {
         });
       ///this.solvedWords.push({ name: name, level: newWordLevel, url });
       this.counter++;
+    }
+  }
+  updateGameLevel() {
+    console.log(`nivel escogido ${this.allowedLevels} nivel de juego ${this.currentLevel}`);
+    console.log(`Palabras resueltas ${this.solvedWords.length} desconocidas ${this.unknown.length}`);
+    if ((this.unknown?.length === 0) && (this.allowedLevels===this.currentLevel)) {
+      updateStudentGameLevel("12345")
+      console.log("YA SON IGUALES");
+    } else {
+      console.log("AUN NO SON IGUALES");
     }
   }
   endGame() {

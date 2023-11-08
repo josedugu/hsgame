@@ -63,9 +63,9 @@ export const spellChecker2 = async (txt) => {
 
   console.log("recognitionService STARTED");
 
-  return new Promise(async (resolve) => {
+  return new Promise( (resolve) => {
     // Espera hasta que el reconocimiento esté listo
-    await recognitionService.start();
+     recognitionService.start();
 
     recognitionService.onresult = (event) => {
       const result = event.results[0][0].transcript;

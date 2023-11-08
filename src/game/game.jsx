@@ -37,7 +37,7 @@ export const Game = () => {
   const [allWords, setAllWords] = useState(null);
   const [showLogros, setShowLogros] = useState(false);
   const [showEndScreen, setShowEndScreen] = useState(false);
-  
+
   const timerRef = useRef();
   ///FUNCTIONS
   const startTimer = () => {
@@ -174,47 +174,6 @@ export const Game = () => {
           <ExitToAppIcon fontSize="large" color="warning" />
         </IconButton>
       </AppBar>
-
-
-     {showEndScreen&& <EndScreen
-        newLevel={newLevel}
-        show={showEndScreen}
-        setLevel={setLevel}
-        setShowEndScreen={setShowEndScreen}
-      />}
-      <Stack
-        sx={{
-          display: showCounter ? "flex" : "none",
-          width: "100%",
-          height: "90%",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {showCounter ? <Countdown /> : ""}
-      </Stack>
-    
-       {showWords && 
-        <WordsContainer
-          words={words}
-          newLevel={newLevel}
-          level={level}
-          showWords={showWords}
-          checkAnswer={checkAnswer}
-        />}
-    
-      <Stack
-        sx={{
-          display:
-            screenOrientation === 0 && screenWidth < 600 ? "flex" : "none",
-          width: "100%",
-          height: "90%",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Cellphone />
-      </Stack>
       <Stack
         sx={{
           display: screenWidth < 600 ? "none" : level < 1 ? "flex" : "none",
@@ -244,6 +203,40 @@ export const Game = () => {
             />
           ))}
       </Stack>
+
+      {screenOrientation === 0 && screenWidth < 600 && (
+        <Stack
+          sx={{
+            width: "100%",
+            height: "90%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Cellphone />
+        </Stack>
+      )}
+
+      {showCounter ? <Countdown /> : ""}
+
+      {showWords && (
+        <WordsContainer
+          words={words}
+          newLevel={newLevel}
+          level={level}
+          showWords={showWords}
+          checkAnswer={checkAnswer}
+        />
+      )}
+
+      {showEndScreen && (
+        <EndScreen
+          newLevel={newLevel}
+          show={showEndScreen}
+          setLevel={setLevel}
+          setShowEndScreen={setShowEndScreen}
+        />
+      )}
     </div>
   );
 };

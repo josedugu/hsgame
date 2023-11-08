@@ -13,6 +13,7 @@ import cat from "./assets/cat.jpg";
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 
 export const EndScreen = ({ show,setLevel,setShowEndScreen,newLevel }) => {
+  newLevel?.updateGameLevel()
   const data = newLevel?.getResult();
   console.log(data);
   const handleClick=()=>{

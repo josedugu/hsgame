@@ -20,11 +20,18 @@ const Countdown = () => {
   }, [count]);
 
   return (
-    <div>
-      <Typography variant="h1" color={"#FFFFFF"}>
+    
+      <Typography variant="h1" sx={{
+        width:"100%",
+        height:"90dvh",
+        display:"flex",
+        justifyContent:"center",
+        alignItems:"center",
+        border:"solid 1px blue"
+      }}>
         {count}
       </Typography>
-    </div>
+    
   );
 };
 
